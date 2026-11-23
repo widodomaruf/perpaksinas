@@ -190,6 +190,15 @@
     }
     .sheet-link { font-size: 14px; margin-top: 10px; display: inline-block; }
 
+    .reg-form { display: grid; gap: 14px; max-width: 520px; margin-top: 18px; }
+    .reg-form label { display: grid; gap: 6px; font-weight: 600; font-size: 14px; }
+    .reg-form input[type=text] { padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; font: inherit; }
+    .reg-form .check { display: flex; gap: 10px; align-items: flex-start; font-weight: 400; }
+    .reg-form button { justify-self: start; background: var(--navy); color: #fff; border: 0; border-radius: 8px; padding: 11px 20px; font: inherit; font-weight: 600; cursor: pointer; }
+    .reg-form button:disabled { opacity: .6; cursor: default; }
+    .reg-msg { font-size: 14px; }
+    .reg-msg.ok { color: #1b7f3b; }
+    .reg-msg.err { color: var(--red); }
     footer.site { background: var(--navy-dark); color: #cbd5e6; padding: 40px 0 20px; font-size: 14px; }
     footer.site .cols { display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 32px; }
     footer.site img.logo { height: 88px; width: auto; background: #fff; border-radius: 8px; padding: 6px 10px; }
@@ -224,6 +233,7 @@
         <a href="#tugas">Tugas</a>
         <a href="#forum">Forum PAKSI</a>
         <a href="#anggota">Anggota</a>
+        <a href="#daftar">Daftar</a>
       </nav>
     </div>
   </header>
@@ -496,6 +506,32 @@
 
   </main>
 
+    <!-- DAFTAR ANGGOTA -->
+    <section class="block" id="daftar">
+      <div class="wrap">
+        <p class="kicker">Pendaftaran</p>
+        <h2>Daftar sebagai anggota</h2>
+        <p class="sub">Isi data singkat di bawah. Pendaftaran akan diverifikasi admin sebelum tampil di direktori.</p>
+        <form class="reg-form" id="reg-form">
+          <label>Nama lengkap
+            <input type="text" name="nama" minlength="3" maxlength="120" required>
+          </label>
+          <label>Provinsi
+            <input type="text" name="provinsi" minlength="3" maxlength="60" required>
+          </label>
+          <label>Nomor sertifikat penyuluh (opsional)
+            <input type="text" name="nomor_sertifikat" maxlength="60">
+          </label>
+          <label class="check">
+            <input type="checkbox" name="consent" required>
+            <span>Saya setuju nama, provinsi, dan nomor sertifikat saya ditampilkan di direktori publik PERPAKSINAS.</span>
+          </label>
+          <button type="submit">Kirim pendaftaran</button>
+          <div class="reg-msg" id="reg-msg" role="status"></div>
+        </form>
+      </div>
+    </section>
+
   <footer class="site">
     <div class="wrap">
       <div class="cols">
@@ -529,5 +565,47 @@
     </div>
   </footer>
 
+  <script>
+    (function () {
+      var SUPABASE_URL = 'https://scxflkmpaxnxnuqfvxtg.supabase.co';
+      var SUPABASE_KEY = 'sb_publishable_T8AE_ybRKa4yUvY7ioEwqQ_hsK1wR4A';
+      var form = document.getElementById('reg-form');
+      var msg = document.getElementById('reg-msg');
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var fd = new FormData(form);
+        var body = {
+          nama: String(fd.get('nama') || '').trim(),
+          provinsi: String(fd.get('provinsi') || '').trim(),
+          nomor_sertifikat: String(fd.get('nomor_sertifikat') || '').trim() || null,
+          consent_publik: true,
+          status: 'pending'
+        };
+        var btn = form.querySelector('button');
+        btn.disabled = true;
+        msg.className = 'reg-msg';
+        msg.textContent = 'Mengirim...';
+        fetch(SUPABASE_URL + '/rest/v1/pendaftaran', {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=minimal'
+          },
+          body: JSON.stringify(body)
+        }).then(function (res) {
+          if (!res.ok) throw new Error('HTTP ' + res.status);
+          form.reset();
+          msg.className = 'reg-msg ok';
+          msg.textContent = 'Terima kasih. Pendaftaran kamu sudah masuk dan menunggu verifikasi admin.';
+        }).catch(function () {
+          msg.className = 'reg-msg err';
+          msg.textContent = 'Pendaftaran belum terkirim. Coba lagi beberapa saat lagi.';
+        }).finally(function () {
+          btn.disabled = false;
+        });
+      });
+    })();
+  </script>
 </body>
 </html>
