@@ -199,6 +199,14 @@
     .reg-msg { font-size: 14px; }
     .reg-msg.ok { color: #1b7f3b; }
     .reg-msg.err { color: var(--red); }
+    .news-list { display: grid; gap: 14px; margin-top: 18px; }
+    .news-card { border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; background: #fff; }
+    .news-card .meta { font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+    .news-card h3 { margin: 0 0 6px; font-size: 17px; color: var(--ink); }
+    .news-card p { margin: 0 0 8px; color: var(--ink); line-height: 1.6; }
+    .news-card .src { font-size: 12px; color: var(--muted); }
+    .news-card .src a { color: var(--navy); }
+    .news-card img { width: 100%; height: auto; border-radius: 8px; margin-bottom: 10px; }
     footer.site { background: var(--navy-dark); color: #cbd5e6; padding: 40px 0 20px; font-size: 14px; }
     footer.site .cols { display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 32px; }
     footer.site img.logo { height: 88px; width: auto; background: #fff; border-radius: 8px; padding: 6px 10px; }
@@ -232,6 +240,7 @@
         <a href="#pengurus">Pengurus</a>
         <a href="#tugas">Tugas</a>
         <a href="#forum">Forum PAKSI</a>
+        <a href="#berita">Berita</a>
         <a href="#anggota">Anggota</a>
         <a href="#daftar">Daftar</a>
       </nav>
@@ -490,6 +499,16 @@
       </div>
     </section>
 
+    <!-- BERITA FORUM -->
+    <section class="block" id="berita">
+      <div class="wrap">
+        <p class="kicker">Berita</p>
+        <h2>Pengukuhan forum dan peresmian Perpaksinas</h2>
+        <p class="sub">Ringkasan berita yang pernah dimuat di situs sumbernya. Klik sumber untuk membaca berita asli.</p>
+        <div class="news-list" id="news-list"><div class="meta">Memuat berita...</div></div>
+      </div>
+    </section>
+
     <!-- ANGGOTA -->
     <section class="block alt" id="anggota">
       <div class="wrap">
@@ -605,6 +624,50 @@
           btn.disabled = false;
         });
       });
+    })();
+  </script>
+  <script>
+    (function () {
+      var SUPABASE_URL = 'https://scxflkmpaxnxnuqfvxtg.supabase.co';
+      var SUPABASE_KEY = 'sb_publishable_T8AE_ybRKa4yUvY7ioEwqQ_hsK1wR4A';
+      var list = document.getElementById('news-list');
+      var url = SUPABASE_URL + '/rest/v1/berita?select=judul,ringkasan,published_at,sumber_nama,sumber_url,gambar_url,forums(nama)&status=eq.terbit&order=published_at.desc';
+      fetch(url, { headers: { 'apikey': SUPABASE_KEY } })
+        .then(function (res) { if (!res.ok) throw new Error('HTTP ' + res.status); return res.json(); })
+        .then(function (rows) {
+          list.textContent = '';
+          if (!rows.length) { list.innerHTML = '<div class="meta">Belum ada berita.</div>'; return; }
+          rows.forEach(function (b) {
+            var card = document.createElement('article');
+            card.className = 'news-card';
+            if (b.gambar_url) {
+              var img = document.createElement('img');
+              img.src = b.gambar_url; img.alt = ''; img.loading = 'lazy';
+              card.appendChild(img);
+            }
+            var meta = document.createElement('div');
+            meta.className = 'meta';
+            var tgl = b.published_at ? new Date(b.published_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
+            meta.textContent = [b.forums && b.forums.nama, tgl].filter(Boolean).join(' · ');
+            card.appendChild(meta);
+            var h = document.createElement('h3'); h.textContent = b.judul; card.appendChild(h);
+            var p = document.createElement('p'); p.textContent = b.ringkasan || ''; card.appendChild(p);
+            var src = document.createElement('div'); src.className = 'src';
+            src.appendChild(document.createTextNode('Pernah dimuat di '));
+            var a = document.createElement('a');
+            a.href = b.sumber_url; a.target = '_blank'; a.rel = 'noopener noreferrer';
+            a.textContent = b.sumber_nama || b.sumber_url;
+            src.appendChild(a);
+            card.appendChild(src);
+            list.appendChild(card);
+          });
+        })
+        .catch(function () {
+          list.textContent = '';
+          var d = document.createElement('div'); d.className = 'meta';
+          d.textContent = 'Berita belum bisa dimuat. Coba lagi beberapa saat lagi.';
+          list.appendChild(d);
+        });
     })();
   </script>
 </body>
