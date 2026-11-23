@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PERPAKSINAS – Perkumpulan Penyuluh Antikorupsi Nasional</title>
+  <meta name="description" content="PERPAKSINAS menghimpun forum penyuluh antikorupsi (PAKSI) dari provinsi, kabupaten/kota, kementerian/lembaga, dan asosiasi di seluruh Indonesia.">
+  <link rel="icon" href="assets/logo-icon-128.png" type="image/png">
+  <style>
+    :root {
+      --navy: #0b2a6b;
+      --navy-dark: #0a1f4d;
+      --red: #d50000;
+      --ink: #1d2433;
+      --muted: #5b6474;
+      --line: #e2e6ee;
+      --soft: #f4f6fa;
+      --max: 1080px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      color: var(--ink);
+      background: #fff;
+      line-height: 1.6;
+    }
+    a { color: var(--navy); }
+    .wrap { max-width: var(--max); margin: 0 auto; padding: 0 20px; }
+    h1, h2, h3, h4 { line-height: 1.25; }
+    h2 { color: var(--navy); font-size: 26px; margin: 0 0 8px; }
+    .kicker {
+      color: var(--red); font-size: 13px; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase; margin: 0 0 6px;
+    }
+    .sub { color: var(--muted); margin: 0 0 24px; max-width: 720px; }
+
+    /* Header */
+    header.site {
+      position: sticky; top: 0; z-index: 20;
+      background: rgba(255,255,255,.96); border-bottom: 1px solid var(--line);
+    }
+    header.site .wrap {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; min-height: 68px; flex-wrap: wrap;
+    }
+    header.site img { height: 44px; width: auto; }
+    nav.main a {
+      margin-left: 18px; text-decoration: none;
+      color: var(--ink); font-weight: 600; font-size: 15px;
+    }
+    nav.main a:hover { color: var(--red); }
+
+    /* Hero */
+    .hero {
+      background: linear-gradient(135deg, var(--navy-dark) 0%, var(--navy) 60%, #1d4fa0 100%);
+      color: #fff;
+      padding: 64px 0 56px;
+    }
+    .hero-grid {
+      display: grid; grid-template-columns: 1.3fr 1fr; gap: 40px; align-items: center;
+    }
+    .hero h1 { font-size: 40px; margin: 0 0 14px; letter-spacing: -0.01em; }
+    .hero .full-name { font-size: 18px; margin: 0 0 6px; font-weight: 600; opacity: .95; }
+    .hero .tagline { color: #ffb4b4; font-weight: 700; letter-spacing: 0.05em; margin: 0 0 18px; }
+    .hero .intro { opacity: .9; font-size: 17px; margin: 0 0 24px; max-width: 620px; }
+    .btns a {
+      display: inline-block; padding: 10px 18px; border-radius: 8px;
+      text-decoration: none; font-weight: 600; font-size: 15px; margin-right: 10px;
+    }
+    .btn-light { background: #fff; color: var(--navy); }
+    .btn-ghost { border: 1px solid rgba(255,255,255,.6); color: #fff; }
+    .hero-logo { text-align: center; }
+    .hero-logo img {
+      width: 100%; max-width: 440px; height: auto;
+      background: #fff; border-radius: 16px; padding: 22px;
+    }
+    .stats {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 40px;
+    }
+    .stat {
+      background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.18);
+      border-radius: 12px; padding: 18px 20px;
+    }
+    .stat .num { font-size: 30px; font-weight: 800; line-height: 1.1; }
+    .stat .label { opacity: .85; font-size: 14px; margin-top: 4px; }
+
+    section.block { padding: 64px 0; border-bottom: 1px solid var(--line); }
+    section.block:last-of-type { border-bottom: 0; }
+    .alt { background: var(--soft); }
+
+    /* Values */
+    .values { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .value {
+      background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 22px;
+    }
+    .value .v-tag {
+      display: inline-block; font-weight: 800; font-size: 13px; letter-spacing: .05em;
+      text-transform: uppercase; color: var(--red); margin-bottom: 6px;
+    }
+    .value h3 { color: var(--navy); margin: 0 0 6px; font-size: 18px; }
+    .value p { margin: 0; color: var(--muted); font-size: 15px; }
+
+    .about-card {
+      background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 22px; margin-top: 20px;
+    }
+    .about-card h3 { color: var(--navy); margin: 0 0 8px; font-size: 18px; }
+    .about-card p { margin: 0; color: var(--muted); font-size: 15px; }
+
+    /* Tugas (details) */
+    .duty { border: 1px solid var(--line); border-radius: 12px; background: #fff; margin-bottom: 12px; }
+    .duty summary {
+      cursor: pointer; padding: 16px 20px; font-weight: 700; color: var(--navy);
+      list-style: none; display: flex; justify-content: space-between; align-items: center;
+    }
+    .duty summary::-webkit-details-marker { display: none; }
+    .duty summary::after { content: "+"; font-size: 20px; color: var(--red); }
+    .duty[open] summary::after { content: "−"; }
+    .duty .body { padding: 0 20px 18px; color: var(--muted); font-size: 15px; }
+    .duty ul { margin: 0; padding-left: 20px; }
+    .duty li { margin-bottom: 6px; }
+
+    /* Timeline */
+    .timeline { position: relative; margin: 32px 0 0; padding-left: 28px; }
+    .timeline::before {
+      content: ""; position: absolute; left: 7px; top: 6px; bottom: 6px;
+      width: 2px; background: var(--line);
+    }
+    .tl-item { position: relative; padding: 0 0 28px 0; }
+    .tl-item::before {
+      content: ""; position: absolute; left: -26px; top: 6px;
+      width: 14px; height: 14px; border-radius: 50%;
+      background: #fff; border: 3px solid var(--navy);
+    }
+    .tl-item.major::before { background: var(--red); border-color: var(--red); }
+    .tl-year { font-weight: 800; color: var(--navy); font-size: 15px; }
+    .tl-title { font-weight: 700; margin: 2px 0 2px; }
+    .tl-text { color: var(--muted); font-size: 15px; margin: 0; }
+
+    /* Pengurus */
+    .chair {
+      display: flex; gap: 18px; align-items: center;
+      background: var(--navy); color: #fff; border-radius: 14px;
+      padding: 22px 24px; margin-bottom: 24px;
+    }
+    .chair .avatar {
+      width: 64px; height: 64px; border-radius: 50%;
+      background: rgba(255,255,255,.15); display: flex; align-items: center;
+      justify-content: center; font-weight: 800; font-size: 22px; flex-shrink: 0;
+    }
+    .chair .role { font-size: 13px; text-transform: uppercase; letter-spacing: .08em; opacity: .85; }
+    .chair .name { font-size: 20px; font-weight: 700; }
+    .chair .period { font-size: 14px; opacity: .85; }
+    .pengurus-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px;
+    }
+    .person { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; }
+    .person .pos { font-size: 12px; color: var(--red); font-weight: 700; text-transform: uppercase; letter-spacing: .05em; }
+    .person .nm { font-weight: 700; margin: 4px 0 0; }
+    .sub-head { font-size: 16px; color: var(--navy); margin: 36px 0 12px; }
+
+    .note {
+      font-size: 14px; color: var(--muted); background: var(--soft);
+      border-left: 3px solid var(--red); padding: 10px 14px; margin: 24px 0 0;
+    }
+
+    /* Forum */
+    .forum-cats {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px; margin-bottom: 28px;
+    }
+    .cat-box { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
+    .cat-box .c { font-weight: 800; color: var(--navy); font-size: 15px; }
+    .cat-box .d { color: var(--muted); font-size: 13px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 14px; }
+    .card { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; }
+    .card .tag { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+    .card h4 { margin: 4px 0 6px; font-size: 16px; }
+    .card p { margin: 0; font-size: 14px; color: var(--muted); }
+
+    table { width: 100%; border-collapse: collapse; font-size: 15px; background: #fff; }
+    th, td { text-align: left; padding: 11px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    th { background: var(--soft); color: var(--navy); font-weight: 700; }
+    .table-wrap { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; margin-top: 12px; }
+
+    /* Anggota */
+    .sheet-frame {
+      width: 100%; height: 70vh; min-height: 420px; border: 1px solid var(--line);
+      border-radius: 12px; margin-top: 16px; background: #fff;
+    }
+    .sheet-link { font-size: 14px; margin-top: 10px; display: inline-block; }
+
+    footer.site { background: var(--navy-dark); color: #fff; padding: 36px 0; font-size: 14px; }
+    footer.site .wrap { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    footer.site img { height: 48px; width: auto; background: #fff; border-radius: 8px; padding: 4px; }
+    footer.site .muted { opacity: .8; }
+
+    @media (max-width: 760px) {
+      .hero-grid, .values { grid-template-columns: 1fr; }
+      .hero h1 { font-size: 30px; }
+      .stats { grid-template-columns: 1fr; }
+      nav.main a { margin-left: 12px; font-size: 14px; }
+      h2 { font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site">
+    <div class="wrap">
+      <a href="#beranda"><img src="assets/logo-perpaksinas-300.png" alt="PERPAKSINAS"></a>
+      <nav class="main">
+        <a href="#tentang">Tentang</a>
+        <a href="#riwayat">Riwayat</a>
+        <a href="#pengurus">Pengurus</a>
+        <a href="#tugas">Tugas</a>
+        <a href="#forum">Forum PAKSI</a>
+        <a href="#anggota">Anggota</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- HERO -->
+    <section class="hero" id="beranda">
+      <div class="wrap hero-grid">
+        <div>
+          <p class="kicker" style="color:#ffb4b4">Selamat datang</p>
+          <h1>PERPAKSINAS</h1>
+          <p class="full-name">Perkumpulan Penyuluh Antikorupsi Nasional</p>
+          <p class="tagline">MANDIRI – INDEPENDEN – BERDAYA</p>
+          <p class="intro">Wadah bersama para penyuluh antikorupsi dari provinsi, kabupaten/kota, kementerian/lembaga, dan asosiasi di seluruh Indonesia.</p>
+          <div class="btns">
+            <a class="btn-light" href="#riwayat">Lihat riwayat</a>
+            <a class="btn-ghost" href="#forum">Forum PAKSI</a>
+          </div>
+        </div>
+        <div class="hero-logo">
+          <img src="assets/logo-perpaksinas-600.png" alt="Logo PERPAKSINAS">
+        </div>
+      </div>
+      <div class="wrap">
+        <div class="stats">
+          <div class="stat"><div class="num">46</div><div class="label">Forum PAKSI yang dihimpun (data 2025)</div></div>
+          <div class="stat"><div class="num">±6.000</div><div class="label">Penyuluh anggota (data 2025)</div></div>
+          <div class="stat"><div class="num">Yudi Ismono</div><div class="label">Ketua Umum (masa bakti 2023–2026)</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TENTANG -->
+    <section class="block" id="tentang">
+      <div class="wrap">
+        <p class="kicker">Tentang</p>
+        <h2>Apa itu PERPAKSINAS</h2>
+        <p class="sub">PERPAKSINAS menghimpun para penyuluh antikorupsi dari berbagai daerah dan instansi. Penyuluh bekerja bersama KPK untuk menyebarkan nilai integritas kepada masyarakat, aparatur, dan pelajar.</p>
+
+        <div class="values">
+          <div class="value">
+            <span class="v-tag">Mandiri</span>
+            <h3>Tata kelola yang jelas</h3>
+            <p>Organisasi dikelola secara profesional dan transparan dalam setiap kegiatan penyuluhan.</p>
+          </div>
+          <div class="value">
+            <span class="v-tag">Independen</span>
+            <h3>Bebas intervensi</h3>
+            <p>Peran pencegahan dan edukasi antikorupsi dijalankan tanpa tekanan politik.</p>
+          </div>
+          <div class="value">
+            <span class="v-tag">Berdaya</span>
+            <h3>Kapasitas anggota</h3>
+            <p>Anggota didorong untuk makin cakap dan memberi dampak positif di daerahnya.</p>
+          </div>
+        </div>
+
+        <div class="about-card">
+          <h3>Sejarah singkat</h3>
+          <p>Diresmikan 24 November 2023 di Riau melalui musyawarah nasional. Lahir dari deklarasi TAPAKSIAPI pada 10 Desember 2022.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIWAYAT -->
+    <section class="block alt" id="riwayat">
+      <div class="wrap">
+        <p class="kicker">Riwayat</p>
+        <h2>Perjalanan PAKSI dan PERPAKSINAS</h2>
+        <p class="sub">Tonggak penting dari forum penyuluh antikorupsi sampai PERPAKSINAS terbentuk dan terus bertambah.</p>
+
+        <div class="timeline">
+          <div class="tl-item">
+            <div class="tl-year">2017</div>
+            <div class="tl-title">LSP KPK berlisensi BNSP</div>
+            <p class="tl-text">Lembaga sertifikasi KPK memperoleh lisensi BNSP. Sertifikasi penyuluh dan ahli pembangun integritas dijalankan sejak itu.</p>
+          </div>
+          <div class="tl-item">
+            <div class="tl-year">2019</div>
+            <div class="tl-title">Forum PAKSI daerah mulai terbentuk</div>
+            <p class="tl-text">Forum di tingkat provinsi, seperti Jawa Tengah dan Jawa Timur, mulai berdiri. Tahun ini diambil dari catatan forum di riset, belum dicek ke SK.</p>
+          </div>
+          <div class="tl-item">
+            <div class="tl-year">2021</div>
+            <div class="tl-title">Forum K/L pertama dikukuhkan KPK</div>
+            <p class="tl-text">Forum PAK guru dan tenaga pendidikan madrasah dikukuhkan KPK pada 6 April 2021. Peringatan Hakordia 2021 juga menjadi cikal bakal TAPAKSIAPI.</p>
+          </div>
+          <div class="tl-item">
+            <div class="tl-year">2022</div>
+            <div class="tl-title">Kemenkes, Kemenkeu, dan Jambore Nasional</div>
+            <p class="tl-text">Forum PAK Prokes Kemenkes dikukuhkan 4 April 2022. Jambore Nasional PAKSI berlangsung 20–23 Mei 2022. Forum Paksiapi Dana Rakca dikukuhkan Menteri Keuangan 13 Desember 2022.</p>
+          </div>
+          <div class="tl-item major">
+            <div class="tl-year">10 Desember 2022</div>
+            <div class="tl-title">Deklarasi TAPAKSIAPI</div>
+            <p class="tl-text">Forum temu aksi penyuluh dan ahli pembangun integritas dibuka di Jakarta. Pada akhir 2022 tercatat sekitar 41 forum PAKSI-API di seluruh Indonesia.</p>
+          </div>
+          <div class="tl-item major">
+            <div class="tl-year">24 November 2023</div>
+            <div class="tl-title">PERPAKSINAS diresmikan di Riau</div>
+            <p class="tl-text">Musyawarah nasional membentuk PERPAKSINAS dengan Yudi Ismono sebagai Ketua Umum. Pengurus periode 2023–2026 ditetapkan.</p>
+          </div>
+          <div class="tl-item">
+            <div class="tl-year">2024</div>
+            <div class="tl-title">Pertumbuhan forum dan pemerintah daerah</div>
+            <p class="tl-text">Pada Februari 2024 KPK mencatat 37 forum provinsi, 8 forum K/L, 1 forum asosiasi, dan PERPAKSINAS. Forum Kemenkumham Paksi Pengayoman dikukuhkan 20 Mei 2024.</p>
+          </div>
+          <div class="tl-item">
+            <div class="tl-year">2025</div>
+            <div class="tl-title">Pengukuhan forum daerah terus berjalan</div>
+            <p class="tl-text">Forum PAKSI Maluku Utara dikukuhkan 29 September 2025. Lampung Timur mengukuhkan forum kabupaten pertama di provinsinya pada 15 Desember 2025. Pada 2025 PERPAKSINAS mewadahi 46 forum dan sekitar 6.000 penyuluh.</p>
+          </div>
+          <div class="tl-item major">
+            <div class="tl-year">2026</div>
+            <div class="tl-title">Pengurus forum baru dikukuhkan</div>
+            <p class="tl-text">Forum PAKSI Sumatera Barat dikukuhkan 8 September 2026. Forum PAKSI Sulawesi Utara masa bakti 2026–2030 dikukuhkan 21 September 2026. Forum Kabupaten Tabalong dikukuhkan 19 November 2026.</p>
+          </div>
+        </div>
+        <div class="note">Tanggal dan jumlah di halaman ini berasal dari pemberitaan dan publikasi KPK. Jumlah forum dan penyuluh berbeda antarsumber dan tahun, dan belum diverifikasi ke sumber resmi PERPAKSINAS.</div>
+      </div>
+    </section>
+
+    <!-- PENGURUS -->
+    <section class="block" id="pengurus">
+      <div class="wrap">
+        <p class="kicker">Kepengurusan</p>
+        <h2>Pengurus PERPAKSINAS</h2>
+        <p class="sub">Susunan pengurus periode 2023–2026. Ejaan nama dibaca dari dokumen struktur dan masih perlu dicek ulang.</p>
+
+        <div class="chair">
+          <div class="avatar">YI</div>
+          <div>
+            <div class="role">Ketua Umum</div>
+            <div class="name">Master Yudi Ismono</div>
+            <div class="period">Masa bakti 2023–2026</div>
+          </div>
+        </div>
+
+        <h3 class="sub-head">Ketua dan Sekretariat</h3>
+        <div class="pengurus-grid">
+          <div class="person"><div class="pos">Ketua 1 · Organisasi; Advokasi &amp; Hukum</div><div class="nm">Master Rusham Haeruddin Haruna</div></div>
+          <div class="person"><div class="pos">Ketua 2 · Kerjasama &amp; Humas; Teknologi &amp; Informasi</div><div class="nm">Master Zainul Ulum</div></div>
+          <div class="person"><div class="pos">Ketua 3 · Umum &amp; SDM</div><div class="nm">Master Kusuma Santi Wahyuningsih</div></div>
+          <div class="person"><div class="pos">Ketua 4 · Pembinaan &amp; Litbang</div><div class="nm">Master Bobby Hartadhy Toeweh</div></div>
+          <div class="person"><div class="pos">Sekretaris Umum</div><div class="nm">Master Engki Rendra</div></div>
+          <div class="person"><div class="pos">Wakil Sekretaris Umum</div><div class="nm">Master Hesi Dwi Untari</div></div>
+          <div class="person"><div class="pos">Bendahara 1</div><div class="nm">Master Eduar</div></div>
+          <div class="person"><div class="pos">Bendahara 2</div><div class="nm">Master Oktavia Ester Pangaribuan</div></div>
+        </div>
+
+        <h3 class="sub-head">Dewan Pembina</h3>
+        <div class="pengurus-grid">
+          <div class="person"><div class="nm">Prof. Hibnu Nugroho</div></div>
+          <div class="person"><div class="nm">Master Suharsi</div></div>
+          <div class="person"><div class="nm">Master Sujanarko</div></div>
+          <div class="person"><div class="nm">Gandjar Laksmana Bonaprapta</div></div>
+        </div>
+
+        <h3 class="sub-head">Dewan Pengawas</h3>
+        <div class="pengurus-grid">
+          <div class="person"><div class="pos">Ketua</div><div class="nm">Prof. Nanang T. Puspito</div></div>
+          <div class="person"><div class="pos">Sekretaris</div><div class="nm">Master Badrul</div></div>
+          <div class="person"><div class="nm">Master Ratu Syafitri</div></div>
+          <div class="person"><div class="nm">Master Dede Mulyadi</div></div>
+          <div class="person"><div class="nm">Master Daisy Novira</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TUGAS -->
+    <section class="block alt" id="tugas">
+      <div class="wrap">
+        <p class="kicker">Tugas &amp; Wewenang</p>
+        <h2>Tugas pokok dan fungsi</h2>
+        <p class="sub">Uraian tugas tiap organ. Klik untuk membuka.</p>
+
+        <details class="duty">
+          <summary>Dewan Pembina</summary>
+          <div class="body">
+            <ul>
+              <li>Memberikan saran dan bantuan kepada Pengurus dalam melaksanakan seluruh kegiatan organisasi.</li>
+              <li>Memberikan teguran dan arahan apabila Pengurus dinilai menyimpang dari AD/ART.</li>
+              <li>Membantu memelihara dan mengembangkan hubungan baik dengan masyarakat dan Pemerintah.</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="duty">
+          <summary>Dewan Pengawas</summary>
+          <div class="body">
+            <ul>
+              <li>Melakukan fungsi pengawasan atas penggunaan kekayaan dan keuangan organisasi.</li>
+              <li>Mengawasi kegiatan konsolidasi organisasi di tingkat nasional dan daerah.</li>
+              <li>Menerima pengaduan pelanggaran etika dan membentuk Dewan Etik secara ad-hoc/temporer.</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="duty">
+          <summary>Ketua Umum</summary>
+          <div class="body">
+            <ul>
+              <li>Melakukan koordinasi, supervisi, fasilitasi, serta pembinaan seluruh urusan organisasi.</li>
+              <li>Melaksanakan keputusan Musyawarah Nasional (Munas) dan Rapat Kerja Nasional (Rakernas).</li>
+              <li>Mewakili organisasi dalam hubungan kemasyarakatan dan lembaga tinggi negara.</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="duty">
+          <summary>Bidang-bidang operasional</summary>
+          <div class="body">
+            <ul>
+              <li><strong>Organisasi, Advokasi &amp; Hukum:</strong> pendataan anggota PAKSI, fasilitasi hukum, dan pengembangan forum regional.</li>
+              <li><strong>Kerjasama, Humas &amp; IT:</strong> pengelolaan media informasi, hubungan antarlembaga, dan sistem informasi.</li>
+              <li><strong>Umum &amp; SDM:</strong> peningkatan kompetensi penyuluh, layanan peraga penyuluhan, dan pendataan anggota.</li>
+              <li><strong>Pembinaan &amp; Litbang:</strong> riset efektivitas metode penyuluhan dan pengembangan modul edukasi antikorupsi.</li>
+            </ul>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- FORUM -->
+    <section class="block" id="forum">
+      <div class="wrap">
+        <p class="kicker">Forum PAKSI</p>
+        <h2>Forum yang bergabung</h2>
+        <p class="sub">Forum penyuluh antikorupsi dikelompokkan menurut tingkatannya. Daftar lengkap menunggu data resmi dari Bidang Organisasi.</p>
+
+        <div class="forum-cats">
+          <div class="cat-box"><div class="c">Provinsi</div><div class="d">Dikukuhkan gubernur atau wakil gubernur</div></div>
+          <div class="cat-box"><div class="c">Kabupaten/kota</div><div class="d">Dibentuk pemerintah daerah</div></div>
+          <div class="cat-box"><div class="c">Kementerian/lembaga</div><div class="d">Contoh: Kemenkeu, Kemenkes, Kemenkumham</div></div>
+          <div class="cat-box"><div class="c">Profesi &amp; BUMN</div><div class="d">Asosiasi dan badan usaha</div></div>
+        </div>
+
+        <h3 class="sub-head">Pengukuhan terbaru</h3>
+        <div class="grid">
+          <div class="card"><div class="tag">Kalimantan Selatan · Kabupaten</div><h4>Forum PAKSI Kabupaten Tabalong</h4><p>Dikukuhkan 19 November 2026. Masa bakti 2026–2028.</p></div>
+          <div class="card"><div class="tag">Sulawesi Utara · Provinsi</div><h4>Forum PAKSI Provinsi Sulawesi Utara</h4><p>Dikukuhkan 21 September 2026. Masa bakti 2026–2030.</p></div>
+          <div class="card"><div class="tag">Sumatera Barat · Provinsi</div><h4>Forum PAKSI Provinsi Sumatera Barat</h4><p>Dikukuhkan 8 September 2026. Masa bakti belum diverifikasi.</p></div>
+          <div class="card"><div class="tag">Lampung · Kabupaten</div><h4>Forum PAKSI Kabupaten Lampung Timur</h4><p>Dikukuhkan 15 Desember 2025. Masa bakti 2026–2028.</p></div>
+          <div class="card"><div class="tag">Maluku Utara · Provinsi</div><h4>Forum PAKSI Provinsi Maluku Utara</h4><p>Dikukuhkan 29 September 2025.</p></div>
+        </div>
+
+        <h3 class="sub-head">Forum lain yang sudah tercatat</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Forum</th><th>Kategori</th><th>Keterangan</th></tr></thead>
+            <tbody>
+              <tr><td>Forum Komunikasi PAKSI Kepulauan Bangka Belitung</td><td>Provinsi</td><td>Dikukuhkan 2023, masa bakti 2023–2027</td></tr>
+              <tr><td>PAK Prokes Kemenkes</td><td>K/L</td><td>Dikukuhkan 4 April 2022, forum K/L pertama</td></tr>
+              <tr><td>Paksi Pengayoman Kemenkumham</td><td>K/L</td><td>Dikukuhkan 20 Mei 2024</td></tr>
+              <tr><td>Paksiapi Dana Rakca</td><td>K/L (Kemenkeu)</td><td>Dikukuhkan Menteri Keuangan, 13 Desember 2022</td></tr>
+              <tr><td>Sumsel AMPERA</td><td>Provinsi</td><td>Dikukuhkan 19 Mei 2022</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="note">Daftar ini belum lengkap. Tanggal berasal dari pemberitaan dan belum diverifikasi ke SK.</div>
+      </div>
+    </section>
+
+    <!-- ANGGOTA -->
+    <section class="block alt" id="anggota">
+      <div class="wrap">
+        <p class="kicker">Anggota</p>
+        <h2>Direktori penyuluh</h2>
+        <p class="sub">Sekitar 6.000 penyuluh tercatat sebagai anggota (data 2025). Daftar lengkap dari data resmi LSP KPK ditampilkan di bawah.</p>
+        <iframe class="sheet-frame"
+                src="https://docs.google.com/spreadsheets/d/1verOP3eqxD6TuPGMDD646gH8L8G2QEIK3Zli8txiDOY/htmlview#gid=1117941245"
+                title="Direktori anggota PAKSI PERPAKSINAS"
+                loading="lazy"></iframe>
+        <a class="sheet-link" href="https://docs.google.com/spreadsheets/d/1verOP3eqxD6TuPGMDD646gH8L8G2QEIK3Zli8txiDOY/htmlview#gid=1117941245" target="_blank" rel="noopener">Buka di tab baru</a>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site">
+    <div class="wrap">
+      <img src="assets/logo-icon-128.png" alt="">
+      <div>
+        <strong>PERPAKSINAS</strong> · Perkumpulan Penyuluh Antikorupsi Nasional<br>
+        <span class="muted">Mandiri – Independen – Berdaya</span>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
