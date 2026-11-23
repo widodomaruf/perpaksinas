@@ -199,7 +199,12 @@
     .reg-msg { font-size: 14px; }
     .reg-msg.ok { color: #1b7f3b; }
     .reg-msg.err { color: var(--red); }
-    .news-list { display: grid; gap: 14px; margin-top: 18px; }
+    .news-slider { position: relative; margin-top: 18px; }
+    .news-list { display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; padding-bottom: 6px; scrollbar-width: none; }
+    .news-list::-webkit-scrollbar { display: none; }
+    .news-list .news-card { flex: 0 0 min(340px, 85%); scroll-snap-align: start; margin: 0; }
+    .news-nav { display: flex; gap: 10px; margin-top: 12px; }
+    .news-nav button { border: 1px solid var(--line); background: #fff; border-radius: 8px; padding: 6px 14px; font: inherit; cursor: pointer; color: var(--navy); }
     .news-card { border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; background: #fff; }
     .news-card .meta { font-size: 12px; color: var(--muted); margin-bottom: 6px; }
     .news-card h3 { margin: 0 0 6px; font-size: 17px; color: var(--ink); }
@@ -471,7 +476,13 @@
         <p class="kicker">Berita</p>
         <h2>Pengukuhan forum dan peresmian Perpaksinas</h2>
         <p class="sub">Ringkasan berita yang pernah dimuat di situs sumbernya. Klik sumber untuk membaca berita asli.</p>
-        <div class="news-list" id="news-list"><div class="meta">Memuat berita...</div></div>
+        <div class="news-slider">
+          <div class="news-list" id="news-list"><div class="meta">Memuat berita...</div></div>
+          <div class="news-nav">
+            <button type="button" id="news-prev" aria-label="Berita sebelumnya">&larr; Sebelumnya</button>
+            <button type="button" id="news-next" aria-label="Berita berikutnya">Berikutnya &rarr;</button>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -626,6 +637,9 @@
             card.appendChild(src);
             list.appendChild(card);
           });
+          var step = function (dir) { var c = list.querySelector('.news-card'); var w = c ? c.offsetWidth + 14 : 300; list.scrollBy({ left: dir * w }); };
+          document.getElementById('news-prev').onclick = function () { step(-1); };
+          document.getElementById('news-next').onclick = function () { step(1); };
         })
         .catch(function () {
           list.textContent = '';
