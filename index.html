@@ -583,9 +583,22 @@
             card.appendChild(src);
             list.appendChild(card);
           });
-          var step = function (dir) { var c = list.querySelector('.news-card'); var w = c ? c.offsetWidth + 14 : 300; list.scrollBy({ left: dir * w }); };
-          document.getElementById('news-prev').onclick = function () { step(-1); };
-          document.getElementById('news-next').onclick = function () { step(1); };
+          var cards = list.querySelectorAll('.news-card');
+          var idx = 0, timer = null, paused = false;
+          var goTo = function (i) {
+            if (!cards.length) return;
+            idx = (i + cards.length) % cards.length;
+            list.scrollTo({ left: cards[idx].offsetLeft - list.offsetLeft, behavior: 'smooth' });
+          };
+          var stopAuto = function () { if (timer) clearInterval(timer); timer = null; };
+          var startAuto = function () { stopAuto(); timer = setInterval(function () { if (!paused) goTo(idx + 1); }, 5000); };
+          document.getElementById('news-prev').onclick = function () { goTo(idx - 1); startAuto(); };
+          document.getElementById('news-next').onclick = function () { goTo(idx + 1); startAuto(); };
+          list.addEventListener('mouseenter', function () { paused = true; });
+          list.addEventListener('mouseleave', function () { paused = false; });
+          list.addEventListener('touchstart', function () { paused = true; }, { passive: true });
+          list.addEventListener('touchend', function () { paused = false; }, { passive: true });
+          if (cards.length > 1) startAuto();
         })
         .catch(function () {
           list.textContent = '';
