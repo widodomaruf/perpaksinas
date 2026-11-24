@@ -229,6 +229,16 @@
   <style>
     .news-page-list { display: grid; gap: 16px; margin-top: 18px; }
     .news-page-list a.card-link { text-decoration: none; color: inherit; }
+    .news-slider { position: relative; margin-top: 18px; }
+    .news-list { display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; padding-bottom: 6px; scrollbar-width: none; }
+    .news-list::-webkit-scrollbar { display: none; }
+    .news-list > a { flex: 0 0 min(360px, 85%); scroll-snap-align: start; text-decoration: none; color: inherit; }
+    .news-list .news-card { height: 100%; margin: 0; }
+    .news-nav { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 12px; }
+    .news-nav button { border: 1px solid var(--line); background: #fff; border-radius: 8px; padding: 6px 14px; font: inherit; cursor: pointer; color: var(--navy); }
+    .news-dots { display: flex; gap: 6px; }
+    .news-dots button { width: 9px; height: 9px; border-radius: 50%; border: 0; padding: 0; background: #c9d3e3; cursor: pointer; }
+    .news-dots button[aria-current="true"] { background: var(--navy); }
     .detail img { width: 100%; max-width: 760px; height: auto; border-radius: 10px; margin: 14px 0; }
     .detail .body { max-width: 760px; line-height: 1.7; }
     .back { display: inline-block; margin-top: 18px; color: var(--navy); }
@@ -328,9 +338,10 @@
             return;
           }
           if (!rows.length) { content.appendChild(el('div', 'meta', 'Belum ada berita.')); return; }
-          var list = el('div', 'news-page-list');
+          var slider = el('div', 'news-slider');
+          var list = el('div', 'news-list');
           rows.forEach(function (b) {
-            var a = el('a', 'card-link'); a.href = 'berita.html?slug=' + encodeURIComponent(b.slug);
+            var a = el('a'); a.href = 'berita.html?slug=' + encodeURIComponent(b.slug);
             var card = el('article', 'news-card');
             if (b.gambar_url) { var img = el('img'); img.src = b.gambar_url; img.alt = ''; img.loading = 'lazy'; card.appendChild(img); }
             card.appendChild(el('div', 'meta', [b.forums && b.forums.nama, fmt(b.published_at)].filter(Boolean).join(' · ')));
@@ -339,7 +350,39 @@
             card.appendChild(sourceLine(b));
             a.appendChild(card); list.appendChild(a);
           });
-          content.appendChild(list);
+          slider.appendChild(list);
+          var nav = el('div', 'news-nav');
+          var prev = el('button', '', '\u2190 Sebelumnya'); prev.type = 'button';
+          var next = el('button', '', 'Berikutnya \u2192'); next.type = 'button';
+          var dots = el('div', 'news-dots');
+          var dotBtns = rows.map(function (b, i) {
+            var d = el('button'); d.type = 'button'; d.setAttribute('aria-label', 'Berita ' + (i + 1));
+            dots.appendChild(d); return d;
+          });
+          nav.appendChild(prev); nav.appendChild(dots); nav.appendChild(next);
+          slider.appendChild(nav);
+          content.appendChild(slider);
+
+          var items = list.children;
+          var current = 0, timer = null, paused = false;
+          var goTo = function (i) {
+            if (!items.length) return;
+            current = (i + items.length) % items.length;
+            list.scrollTo({ left: items[current].offsetLeft - list.offsetLeft, behavior: 'smooth' });
+            dotBtns.forEach(function (d, k) { d.setAttribute('aria-current', k === current ? 'true' : 'false'); });
+          };
+          var tick = function () { if (!paused) goTo(current + 1); };
+          var start = function () { stop(); timer = setInterval(tick, 5000); };
+          var stop = function () { if (timer) clearInterval(timer); timer = null; };
+          prev.onclick = function () { goTo(current - 1); start(); };
+          next.onclick = function () { goTo(current + 1); start(); };
+          dotBtns.forEach(function (d, k) { d.onclick = function () { goTo(k); start(); }; });
+          slider.addEventListener('mouseenter', function () { paused = true; });
+          slider.addEventListener('mouseleave', function () { paused = false; });
+          slider.addEventListener('touchstart', function () { paused = true; }, { passive: true });
+          slider.addEventListener('touchend', function () { paused = false; }, { passive: true });
+          goTo(0);
+          if (items.length > 1) start();
         })
         .catch(function () {
           content.textContent = '';
