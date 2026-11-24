@@ -252,10 +252,12 @@
     .news-page-list { display: grid; gap: 16px; margin-top: 18px; }
     .news-page-list a.card-link { text-decoration: none; color: inherit; }
     .news-slider { position: relative; margin-top: 18px; }
-    .news-list { display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; padding-bottom: 6px; scrollbar-width: none; }
+    .news-list { display: flex; align-items: flex-start; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; padding-bottom: 6px; scrollbar-width: none; }
     .news-list::-webkit-scrollbar { display: none; }
-    .news-list > a { flex: 0 0 min(360px, 85%); scroll-snap-align: start; text-decoration: none; color: inherit; }
-    .news-list .news-card { height: 100%; margin: 0; }
+    .news-list > .news-item { flex: 0 0 min(360px, 85%); scroll-snap-align: start; }
+    .news-list .news-card { margin: 0; }
+    .btn-src { display: inline-block; margin-top: 8px; padding: 10px 16px; background: var(--navy); color: #fff; font-size: 15px; font-weight: 700; line-height: 1.3; border-radius: 8px; text-decoration: none; }
+    .btn-src:hover { background: var(--navy-dark); color: #fff; }
     .news-nav { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 12px; }
     .news-nav button { border: 1px solid var(--line); background: #fff; border-radius: 8px; padding: 6px 14px; font: inherit; cursor: pointer; color: var(--navy); }
     .news-dots { display: flex; gap: 6px; }
@@ -422,10 +424,9 @@
       var fmt = function (d) { return d ? new Date(d).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : ''; };
       var el = function (tag, cls, text) { var n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
       var sourceLine = function (b) {
-        var d = el('div', 'src', 'Pernah dimuat di ');
-        var a = el('a', '', b.sumber_nama || b.sumber_url);
+        var a = el('a', 'btn-src', 'Baca berita asli' + (b.sumber_nama ? ' di ' + b.sumber_nama : '') + ' \u2192');
         a.href = b.sumber_url; a.target = '_blank'; a.rel = 'noopener noreferrer';
-        d.appendChild(a); return d;
+        return a;
       };
       if (slug) {
         document.querySelector('.kat-tabs').hidden = true;
@@ -461,7 +462,7 @@
           var slider = el('div', 'news-slider');
           var list = el('div', 'news-list');
           rows.forEach(function (b) {
-            var a = el('a'); a.href = 'berita.html?slug=' + encodeURIComponent(b.slug);
+            var a = el('div', 'news-item');
             var card = el('article', 'news-card');
             if (b.gambar_url) { var img = el('img'); img.src = b.gambar_url; img.alt = ''; img.loading = 'lazy'; card.appendChild(img); }
             card.appendChild(el('div', 'meta', [b.forums && b.forums.nama, fmt(b.published_at)].filter(Boolean).join(' · ')));
