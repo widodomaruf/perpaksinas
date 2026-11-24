@@ -318,6 +318,13 @@
     .chip:hover { border-color: var(--navy); }
     @media (max-width: 760px) { .chart-wrap { grid-template-columns: 1fr; } }
   </style>
+  <style>
+    /* Riwayat: tampilan horizontal */
+    .timeline { display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 14px 4px 18px; margin: 28px 0 0; scrollbar-width: thin; }
+    .timeline::before { content: ""; position: absolute; left: 0; right: 0; top: 20px; height: 2px; background: var(--line); bottom: auto; width: auto; }
+    .tl-item { position: relative; flex: 0 0 250px; scroll-snap-align: start; background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; }
+    .tl-item::before { left: 16px; top: 0; }
+  </style>
 </head>
 <body>
 
