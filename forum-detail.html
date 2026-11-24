@@ -335,6 +335,7 @@
     .fd-box p { margin: 0 0 8px; line-height: 1.7; }
     .fd-box a { color: var(--navy); word-break: break-all; }
     .back { display: inline-block; margin-bottom: 18px; color: var(--navy); font-weight: 600; text-decoration: none; }
+    .fd-frame { display: block; width: 100%; height: 520px; border: 1px solid var(--line); border-radius: 10px; margin-top: 10px; background: #fff; }
     @media (max-width: 600px) { .fd-head { grid-template-columns: 1fr; } }
   </style>
 </head>
@@ -409,9 +410,10 @@
       var ICON_IG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg>';
       var icon = function (svg) { var w = document.createElement('span'); w.innerHTML = svg; return w.firstChild; };
       // Dummy: isi slug → URL website forum. Nanti pindah ke kolom `website` di tabel forums.
+      // embed: true = tampilkan pratinjau iframe (situs harus mengizinkan framing).
       var WEBSITE_DUMMY = {
-        'kompak-api-jateng': 'https://kompakapijateng.com/',
-        'paksiapi-jabar': 'https://paksiapijabar.id/'
+        'kompak-api-jateng': { url: 'https://kompakapijateng.com/', embed: false },
+        'paksiapi-jabar': { url: 'https://paksiapijabar.id/', embed: true }
       };
       var slug = new URLSearchParams(location.search).get('slug');
       var notFound = function () {
@@ -447,8 +449,15 @@
           if (site) {
             var kw = el('div', 'fd-box');
             kw.appendChild(el('h2', '', 'Website'));
-            var wa = el('a', '', site); wa.href = site; wa.target = '_blank'; wa.rel = 'noopener noreferrer';
+            var wa = el('a', '', site.url); wa.href = site.url; wa.target = '_blank'; wa.rel = 'noopener noreferrer';
             kw.appendChild(el('p', '', '')); kw.lastChild.appendChild(wa);
+            if (site.embed) {
+              var frame = el('iframe', 'fd-frame');
+              frame.src = site.url; frame.title = 'Pratinjau website ' + r.nama; frame.loading = 'lazy';
+              frame.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-popups allow-forms');
+              frame.referrerPolicy = 'no-referrer-when-downgrade';
+              kw.appendChild(frame);
+            }
             box.appendChild(kw);
           }
 
