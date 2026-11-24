@@ -288,6 +288,18 @@
     .person .p-ico { grid-row: 1 / 3; width: 40px; height: 40px; border-radius: 50%; background: rgba(0,32,96,.08); display: grid; place-items: center; color: var(--navy); }
     .person .p-ico svg { width: 20px; height: 20px; }
 </style>
+  <style>
+    .forum-cats { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px; margin: 18px 0 24px; }
+    .cat-box { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; }
+    .cat-box .n { font-size: 28px; font-weight: 800; color: var(--navy); line-height: 1.1; }
+    .cat-box .d { color: var(--muted); font-size: 14px; margin-top: 4px; }
+    .kat-filter { display: flex; gap: 8px; flex-wrap: wrap; margin: 0 0 4px; }
+    .kat-filter button { padding: 9px 16px; border-radius: 999px; border: 1px solid var(--line); background: #fff; color: var(--navy); font: inherit; font-weight: 600; font-size: 14px; cursor: pointer; }
+    .kat-filter button[aria-pressed="true"] { background: var(--navy); border-color: var(--navy); color: #fff; }
+    .card .tag { font-size: 12px; color: var(--red); font-weight: 700; text-transform: uppercase; letter-spacing: .05em; }
+    .card .contact { margin-top: 10px; font-size: 14px; word-break: break-word; }
+    .card .contact a { color: var(--navy); }
+  </style>
 </head>
 <body>
 
@@ -300,6 +312,7 @@
         <a href="#pengurus">Pengurus</a>
         <a href="#tugas">Tugas</a>
         <a href="berita.html">Berita</a>
+        <a href="forum.html">Forum</a>
         <a href="#anggota">Anggota</a>
       </nav>
     </div>
@@ -540,6 +553,17 @@
       </div>
     </section>
 
+    <!-- FORUM RINGKASAN -->
+    <section class="block" id="forum">
+      <div class="wrap">
+        <p class="kicker"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3 2.7-5 6-5s6 2 6 5"/><circle cx="17" cy="9" r="2.5"/><path d="M21 19c0-2-1.5-3.5-4-3.5"/></svg>Forum</p>
+        <h2>Forum PAKSI dan API</h2>
+        <p class="sub">Ringkasan forum penyuluh antikorupsi yang terhimpun di PERPAKSINAS.</p>
+        <div class="forum-cats" id="forum-summary"><div class="meta">Memuat ringkasan...</div></div>
+        <a href="forum.html">Lihat semua forum &rarr;</a>
+      </div>
+    </section>
+
     <!-- ANGGOTA -->
     <section class="block alt" id="anggota">
       <div class="wrap">
@@ -676,6 +700,32 @@
         document.body.classList.add('leaving');
         setTimeout(function () { location.href = a.href; }, 250);
       });
+    })();
+  </script>
+  <script>
+    (function () {
+      var SUPABASE_URL = 'https://scxflkmpaxnxnuqfvxtg.supabase.co';
+      var SUPABASE_KEY = 'sb_publishable_T8AE_ybRKa4yUvY7ioEwqQ_hsK1wR4A';
+      var box = document.getElementById('forum-summary');
+      var url = SUPABASE_URL + '/rest/v1/forums?select=kategori&kategori=neq.perpaksinas';
+      var LABEL = [['provinsi', 'Forum provinsi'], ['kl', 'Kementerian, lembaga & BUMN'], ['komunitas', 'Komunitas']];
+      fetch(url, { headers: { 'apikey': SUPABASE_KEY } })
+        .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+        .then(function (rows) {
+          box.textContent = '';
+          var count = {};
+          rows.forEach(function (r) { count[r.kategori] = (count[r.kategori] || 0) + 1; });
+          var all = [['', rows.length, 'Total forum dan komunitas']].concat(LABEL.map(function (l) { return [l[0], count[l[0]] || 0, l[1]]; }));
+          all.forEach(function (x) {
+            var c = document.createElement('div'); c.className = 'cat-box';
+            var n = document.createElement('div'); n.className = 'n'; n.textContent = x[1];
+            var d = document.createElement('div'); d.className = 'd'; d.textContent = x[2];
+            c.appendChild(n); c.appendChild(d); box.appendChild(c);
+          });
+        })
+        .catch(function () {
+          box.textContent = 'Ringkasan forum belum bisa dimuat.';
+        });
     })();
   </script>
 </body>
