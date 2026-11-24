@@ -274,7 +274,14 @@
       *, *::before, *::after { animation: none !important; transition: none !important; }
       .reveal { opacity: 1; transform: none; }
     }
-</style>
+    .kat-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin: 22px 0 0; }
+    .kat-tabs[hidden] { display: none; }
+    .kat-tabs a { padding: 10px 18px; border-radius: 999px; border: 1px solid var(--line); background: #fff; color: var(--navy); text-decoration: none; font-weight: 600; font-size: 15px; }
+    .kat-tabs a:hover { border-color: var(--navy); }
+    .kat-tabs a[aria-current="page"] { background: var(--navy); border-color: var(--navy); color: #fff; }
+    #timeline[hidden] { display: none; }
+    .kat-tl h2 { margin-top: 32px; }
+  </style>
 </head>
 <body>
 
@@ -296,6 +303,12 @@
   <main class="wrap" style="padding-top: 40px; padding-bottom: 40px;">
     <p class="kicker">Berita</p>
     <h1 id="page-title">Berita PERPAKSINAS dan forum</h1>
+    <nav class="kat-tabs" aria-label="Kategori berita">
+      <a href="berita.html?kat=perpaksinas">Perpaksinas</a>
+      <a href="berita.html?kat=tapaksiapi">TAPAKSIAPI</a>
+      <a href="berita.html?kat=forum">Forum</a>
+    </nav>
+    <div id="timeline"></div>
     <div id="content"><div class="meta">Memuat berita...</div></div>
   </main>
 
@@ -339,8 +352,48 @@
       var title = document.getElementById('page-title');
       var slug = new URLSearchParams(location.search).get('slug');
       var select = 'judul,slug,ringkasan,isi,published_at,sumber_nama,sumber_url,gambar_url,forums(nama)';
+      var KATS = ['perpaksinas', 'tapaksiapi', 'forum'];
+      var kat = new URLSearchParams(location.search).get('kat');
+      if (KATS.indexOf(kat) < 0) kat = 'perpaksinas';
+      var TITLES = { perpaksinas: 'Berita Perpaksinas', tapaksiapi: 'Berita TAPAKSIAPI', forum: 'Berita Forum PAKSI/API' };
+      var TL = {
+        perpaksinas: [
+          { d: '10 Des 2022', h: 'Deklarasi Perpaksinas', x: 'Deklarasi pembentukan Perpaksinas di apel akbar TAPAKSIAPI 2022, Gedung Merah Putih KPK, Jakarta.', major: true },
+          { d: '24 Nov 2023', h: 'Munas Perpaksinas di Riau', x: 'Munas meresmikan Perpaksinas. Yudi Ismono terpilih sebagai ketua periode 2023–2026.', major: true },
+          { d: '9–11 Des 2024', h: 'Sarasehan Perpaksinas', x: 'Sarasehan Perpaksinas dalam rangkaian TAPAKSIAPI 2024.' },
+          { d: '21 Agu 2025', h: 'Sosialisasi pemda Jawa Tengah', x: 'Sosialisasi integritas dan gratifikasi bersama Forum PAK Jateng. Perpaksinas menaungi 46 forum dengan sekitar 6.000 penyuluh (menurut Ketua Yudi Ismono).' },
+          { d: '3 Des 2025', h: 'Seminar Hakordia Kemenkeu Satu DIY', x: 'Yudi Ismono menjadi narasumber seminar yang membahas pendidikan antikorupsi sejak dini.' },
+          { d: 'Mei 2026', h: 'Seminar di ISI Yogyakarta', x: 'Seminar "Dari Diskusi ke Aksi" bersama Forum PAK SIJI DIY, Inspektorat DIY, dan KPK.' }
+        ],
+        tapaksiapi: [
+          { d: '14–16 Des 2021', h: 'TAPAKSIAPI 2021', x: 'Temu aksi penyuluh dan ahli pembangun integritas, rangkaian peringatan Hakordia.' },
+          { d: '8–10 Des 2022', h: 'TAPAKSIAPI 2022', x: 'Digelar di Jakarta dengan tema sinergi bersama berantas korupsi. Lebih dari 200 Paksi dan API hadir.', major: true },
+          { d: '11–13 Des 2023', h: 'TAPAKSIAPI 2023', x: 'Digelar di Jakarta, diikuti 120 Paksi dan API.' },
+          { d: '9–11 Des 2024', h: 'TAPAKSIAPI 2024', x: 'Sekitar 400 peserta dengan tema Paksi-API Berdaya: Teguhkan Komitmen untuk Indonesia Maju.', major: true },
+          { d: '10 Des 2024', h: 'Kelas penguatan kompetensi', x: 'Tujuh kelas penguatan di Jakarta, termasuk kelas pemanfaatan AI untuk penyuluhan antikorupsi.' },
+          { d: '9 Des 2025', h: 'Hakordia 2025 di Yogyakarta', x: 'KPK memberikan penghargaan Forum Paksi dan API Berdaya kepada tujuh forum.' }
+        ]
+      };
+      var renderTimeline = function (k) {
+        var box = document.getElementById('timeline');
+        box.textContent = '';
+        if (!TL[k]) { box.hidden = true; return; }
+        var wrap = el('div', 'kat-tl');
+        wrap.appendChild(el('h2', '', k === 'perpaksinas' ? 'Perjalanan Perpaksinas' : 'Perjalanan TAPAKSIAPI'));
+        var tl = el('div', 'timeline');
+        TL[k].forEach(function (it) {
+          var item = el('div', 'tl-item' + (it.major ? ' major' : ''));
+          item.appendChild(el('div', 'tl-year', it.d));
+          item.appendChild(el('div', 'tl-title', it.h));
+          item.appendChild(el('p', 'tl-text', it.x));
+          tl.appendChild(item);
+        });
+        wrap.appendChild(tl);
+        box.appendChild(wrap);
+      };
       var url = SUPABASE_URL + '/rest/v1/berita?select=' + select + '&status=eq.terbit&order=published_at.desc';
       if (slug) url += '&slug=eq.' + encodeURIComponent(slug);
+      else url += '&kategori=eq.' + kat;
       var fmt = function (d) { return d ? new Date(d).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : ''; };
       var el = function (tag, cls, text) { var n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
       var sourceLine = function (b) {
@@ -349,6 +402,16 @@
         a.href = b.sumber_url; a.target = '_blank'; a.rel = 'noopener noreferrer';
         d.appendChild(a); return d;
       };
+      if (slug) {
+        document.querySelector('.kat-tabs').hidden = true;
+        document.getElementById('timeline').hidden = true;
+      } else {
+        title.textContent = TITLES[kat];
+        document.querySelectorAll('.kat-tabs a').forEach(function (a) {
+          if (a.getAttribute('href') === 'berita.html?kat=' + kat) a.setAttribute('aria-current', 'page');
+        });
+        renderTimeline(kat);
+      }
       fetch(url, { headers: { 'apikey': SUPABASE_KEY } })
         .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
         .then(function (rows) {
