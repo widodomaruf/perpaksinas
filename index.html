@@ -220,7 +220,8 @@
     .news-slider { position: relative; margin-top: 18px; }
     .news-list { display: flex; align-items: flex-start; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; padding-bottom: 6px; scrollbar-width: none; }
     .news-list::-webkit-scrollbar { display: none; }
-    .news-list .news-card { flex: 0 0 min(340px, 85%); scroll-snap-align: start; margin: 0; }
+    .news-list > .news-item { flex: 0 0 min(340px, 85%); scroll-snap-align: start; text-decoration: none; color: inherit; display: block; }
+    .news-list .news-card { margin: 0; height: auto; }
     .news-nav { display: flex; gap: 10px; margin-top: 12px; }
     .news-more { margin-left: auto; align-self: center; color: var(--navy); font-weight: 600; text-decoration: none; }
     .news-more:hover { text-decoration: underline; }
@@ -590,7 +591,7 @@
       <div class="wrap">
         <p class="kicker"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-4 0V9"/><path d="M10 6h8M10 10h8M10 14h4"/></svg>Berita</p>
         <h2>Pengukuhan forum dan peresmian Perpaksinas</h2>
-        <p class="sub">Ringkasan berita yang pernah dimuat di situs sumbernya. Klik sumber untuk membaca berita asli.</p>
+        <p class="sub">Ringkasan berita yang pernah dimuat di situs sumbernya. Klik kartu untuk membaca ringkasan dan sumber asli.</p>
         <div class="news-slider">
           <div class="news-list" id="news-list"><div class="meta">Memuat berita...</div></div>
           <div class="news-nav">
@@ -670,13 +671,16 @@
       var SUPABASE_URL = 'https://scxflkmpaxnxnuqfvxtg.supabase.co';
       var SUPABASE_KEY = 'sb_publishable_T8AE_ybRKa4yUvY7ioEwqQ_hsK1wR4A';
       var list = document.getElementById('news-list');
-      var url = SUPABASE_URL + '/rest/v1/berita?select=judul,ringkasan,published_at,sumber_nama,sumber_url,gambar_url,forums(nama)&status=eq.terbit&order=published_at.desc';
+      var url = SUPABASE_URL + '/rest/v1/berita?select=judul,slug,ringkasan,published_at,sumber_nama,sumber_url,gambar_url,forums(nama)&status=eq.terbit&order=published_at.desc';
       fetch(url, { headers: { 'apikey': SUPABASE_KEY } })
         .then(function (res) { if (!res.ok) throw new Error('HTTP ' + res.status); return res.json(); })
         .then(function (rows) {
           list.textContent = '';
           if (!rows.length) { list.innerHTML = '<div class="meta">Belum ada berita.</div>'; return; }
           rows.forEach(function (b) {
+            var link = document.createElement('a');
+            link.className = 'news-item';
+            link.href = 'berita.html?slug=' + encodeURIComponent(b.slug);
             var card = document.createElement('article');
             card.className = 'news-card';
             if (b.gambar_url) {
@@ -691,12 +695,8 @@
             card.appendChild(meta);
             var h = document.createElement('h3'); h.textContent = b.judul; card.appendChild(h);
             var p = document.createElement('p'); p.textContent = b.ringkasan || ''; card.appendChild(p);
-            var a = document.createElement('a');
-            a.className = 'btn-src';
-            a.href = b.sumber_url; a.target = '_blank'; a.rel = 'noopener noreferrer';
-            a.textContent = 'Baca berita asli' + (b.sumber_nama ? ' di ' + b.sumber_nama : '') + ' \u2192';
-            card.appendChild(a);
-            list.appendChild(card);
+            link.appendChild(card);
+            list.appendChild(link);
           });
           var cards = list.querySelectorAll('.news-card');
           var idx = 0, timer = null, paused = false;
