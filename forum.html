@@ -307,6 +307,12 @@
     .card .contact { margin-top: 10px; font-size: 14px; word-break: break-word; }
     .card .contact a { color: var(--navy); display: inline-flex; align-items: center; gap: 6px; word-break: break-all; }
     .card .contact svg { width: 16px; height: 16px; flex-shrink: 0; }
+    .forum-card { position: relative; }
+    .forum-card h4 a.stretch { color: var(--ink); text-decoration: none; }
+    .forum-card h4 a.stretch::after { content: ""; position: absolute; inset: 0; border-radius: 12px; }
+    .forum-card .contact { position: relative; z-index: 1; }
+    .forum-logo { width: 64px; height: 64px; border-radius: 12px; background: var(--soft); border: 1px dashed var(--line); margin-bottom: 10px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .forum-logo img { width: 100%; height: 100%; object-fit: contain; }
       .ico { width: 20px; height: 20px; vertical-align: -4px; margin-right: 8px; color: var(--navy); flex: 0 0 auto; }
     .kicker .ico { width: 16px; height: 16px; vertical-align: -3px; margin-right: 6px; }
     .cat-box .head { display: flex; align-items: center; gap: 8px; }
@@ -475,9 +481,12 @@
         var list = rows.filter(function (r) { return current === 'all' || r.kategori === current; });
         if (!list.length) { grid.appendChild(el('div', 'meta', 'Belum ada forum di kategori ini.')); return; }
         list.forEach(function (r) {
-          var card = el('article', 'card');
+          var card = el('article', 'card forum-card');
+          var logo = el('div', 'forum-logo'); logo.setAttribute('aria-hidden', 'true'); card.appendChild(logo);
           card.appendChild(el('div', 'tag', LABEL[r.kategori] || r.kategori));
-          card.appendChild(el('h4', '', r.nama));
+          var h = el('h4');
+          var link = el('a', 'stretch', r.nama); link.href = 'forum-detail.html?slug=' + encodeURIComponent(r.slug);
+          h.appendChild(link); card.appendChild(h);
           if (r.nama_lengkap) card.appendChild(el('p', '', r.nama_lengkap));
           if (r.wilayah) card.appendChild(el('p', '', r.wilayah));
           var c = el('p', 'contact');
