@@ -311,7 +311,7 @@
     .forum-card h4 a.stretch { color: var(--ink); text-decoration: none; }
     .forum-card h4 a.stretch::after { content: ""; position: absolute; inset: 0; border-radius: 12px; }
     .forum-card .contact { position: relative; z-index: 1; }
-    .forum-logo { width: 64px; height: 64px; border-radius: 12px; background: var(--soft); border: 1px dashed var(--line); margin-bottom: 10px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .forum-logo { width: 64px; height: 64px; border-radius: 12px; background: #fff; border: 1px solid var(--line); margin-bottom: 10px; display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 6px; }
     .forum-logo img { width: 100%; height: 100%; object-fit: contain; }
       .ico { width: 20px; height: 20px; vertical-align: -4px; margin-right: 8px; color: var(--navy); flex: 0 0 auto; }
     .kicker .ico { width: 16px; height: 16px; vertical-align: -3px; margin-right: 6px; }
@@ -482,7 +482,7 @@
         if (!list.length) { grid.appendChild(el('div', 'meta', 'Belum ada forum di kategori ini.')); return; }
         list.forEach(function (r) {
           var card = el('article', 'card forum-card');
-          var logo = el('div', 'forum-logo'); logo.setAttribute('aria-hidden', 'true'); card.appendChild(logo);
+          var logo = el('div', 'forum-logo'); var lg = el('img'); lg.src = 'assets/logo-icon-128.webp'; lg.alt = ''; lg.loading = 'lazy'; logo.appendChild(lg); card.appendChild(logo);
           card.appendChild(el('div', 'tag', LABEL[r.kategori] || r.kategori));
           var h = el('h4');
           var link = el('a', 'stretch', r.nama); link.href = 'forum-detail.html?slug=' + encodeURIComponent(r.slug);
