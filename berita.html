@@ -283,6 +283,12 @@
     .kat-tl h2 { margin-top: 32px; }
     .ico { width: 20px; height: 20px; vertical-align: -4px; margin-right: 8px; color: var(--navy); flex: 0 0 auto; }
     .kicker .ico { width: 16px; height: 16px; vertical-align: -3px; margin-right: 6px; }
+      .tl-h { display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 14px 4px 14px; margin-top: 12px; position: relative; scrollbar-width: thin; }
+    .tl-h::before { content: ""; position: absolute; left: 0; right: 0; top: 20px; height: 2px; background: var(--line); }
+    .tl-h-item { position: relative; flex: 0 0 230px; scroll-snap-align: start; background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; margin-top: 0; }
+    .tl-h-item::before { content: ""; position: absolute; left: 16px; top: -6px; width: 12px; height: 12px; border-radius: 50%; background: #fff; border: 3px solid var(--navy); }
+    .tl-h-item .tl-year { font-size: 22px; font-weight: 800; color: var(--navy); }
+    .tl-h-item .tl-text { color: var(--muted); font-size: 14px; margin: 6px 0 0; }
   </style>
 </head>
 <body>
@@ -358,39 +364,36 @@
       var kat = new URLSearchParams(location.search).get('kat');
       if (KATS.indexOf(kat) < 0) kat = 'perpaksinas';
       var TITLES = { perpaksinas: 'Berita Perpaksinas', tapaksiapi: 'Berita TAPAKSIAPI', forum: 'Berita Forum PAKSI/API' };
-      var TL = {
+      var TLY = {
         perpaksinas: [
-          { d: '10 Des 2022', h: 'Deklarasi Perpaksinas', x: 'Deklarasi pembentukan Perpaksinas di apel akbar TAPAKSIAPI 2022, Gedung Merah Putih KPK, Jakarta.', major: true },
-          { d: '24 Nov 2023', h: 'Munas Perpaksinas di Riau', x: 'Munas meresmikan Perpaksinas. Yudi Ismono terpilih sebagai ketua periode 2023–2026.', major: true },
-          { d: '9–11 Des 2024', h: 'Sarasehan Perpaksinas', x: 'Sarasehan Perpaksinas dalam rangkaian TAPAKSIAPI 2024.' },
-          { d: '21 Agu 2025', h: 'Sosialisasi pemda Jawa Tengah', x: 'Sosialisasi integritas dan gratifikasi bersama Forum PAK Jateng. Perpaksinas menaungi 46 forum dengan sekitar 6.000 penyuluh (menurut Ketua Yudi Ismono).' },
-          { d: '3 Des 2025', h: 'Seminar Hakordia Kemenkeu Satu DIY', x: 'Yudi Ismono menjadi narasumber seminar yang membahas pendidikan antikorupsi sejak dini.' },
-          { d: 'Mei 2026', h: 'Seminar di ISI Yogyakarta', x: 'Seminar "Dari Diskusi ke Aksi" bersama Forum PAK SIJI DIY, Inspektorat DIY, dan KPK.' }
+          { y: '2022', s: 'Deklarasi pembentukan Perpaksinas di apel akbar TAPAKSIAPI 2022, Jakarta.' },
+          { y: '2023', s: 'Munas di Riau meresmikan Perpaksinas. Yudi Ismono terpilih sebagai ketua 2023–2026.' },
+          { y: '2024', s: 'Sarasehan Perpaksinas dalam rangkaian TAPAKSIAPI 2024.' },
+          { y: '2025', s: 'Sosialisasi pemda Jawa Tengah dan seminar Hakordia Kemenkeu Satu DIY.' },
+          { y: '2026', s: 'Seminar di ISI Yogyakarta bersama Forum PAK SIJI DIY dan KPK.' }
         ],
         tapaksiapi: [
-          { d: '14–16 Des 2021', h: 'TAPAKSIAPI 2021', x: 'Temu aksi penyuluh dan ahli pembangun integritas, rangkaian peringatan Hakordia.' },
-          { d: '8–10 Des 2022', h: 'TAPAKSIAPI 2022', x: 'Digelar di Jakarta dengan tema sinergi bersama berantas korupsi. Lebih dari 200 Paksi dan API hadir.', major: true },
-          { d: '11–13 Des 2023', h: 'TAPAKSIAPI 2023', x: 'Digelar di Jakarta, diikuti 120 Paksi dan API.' },
-          { d: '9–11 Des 2024', h: 'TAPAKSIAPI 2024', x: 'Sekitar 400 peserta dengan tema Paksi-API Berdaya: Teguhkan Komitmen untuk Indonesia Maju.', major: true },
-          { d: '10 Des 2024', h: 'Kelas penguatan kompetensi', x: 'Tujuh kelas penguatan di Jakarta, termasuk kelas pemanfaatan AI untuk penyuluhan antikorupsi.' },
-          { d: '9 Des 2025', h: 'Hakordia 2025 di Yogyakarta', x: 'KPK memberikan penghargaan Forum Paksi dan API Berdaya kepada tujuh forum.' }
+          { y: '2021', s: 'Temu aksi tiga hari dalam rangkaian Hakordia.' },
+          { y: '2022', s: 'Digelar di Jakarta dengan lebih dari 200 Paksi dan API.' },
+          { y: '2023', s: 'Digelar di Jakarta, diikuti 120 Paksi dan API.' },
+          { y: '2024', s: 'Sekitar 400 peserta dan tujuh kelas penguatan, termasuk kelas AI.' },
+          { y: '2025', s: 'KPK memberi penghargaan Forum Paksi dan API Berdaya di Yogyakarta.' }
         ]
       };
       var renderTimeline = function (k) {
         var box = document.getElementById('timeline');
         box.textContent = '';
-        if (!TL[k]) { box.hidden = true; return; }
+        if (!TLY[k]) { box.hidden = true; return; }
         var wrap = el('div', 'kat-tl');
         wrap.appendChild(el('h2', '', k === 'perpaksinas' ? 'Perjalanan Perpaksinas' : 'Perjalanan TAPAKSIAPI'));
-        var tl = el('div', 'timeline');
-        TL[k].forEach(function (it) {
-          var item = el('div', 'tl-item' + (it.major ? ' major' : ''));
-          item.appendChild(el('div', 'tl-year', it.d));
-          item.appendChild(el('div', 'tl-title', it.h));
-          item.appendChild(el('p', 'tl-text', it.x));
-          tl.appendChild(item);
+        var track = el('div', 'tl-h');
+        TLY[k].forEach(function (it) {
+          var card = el('div', 'tl-h-item');
+          card.appendChild(el('div', 'tl-year', it.y));
+          card.appendChild(el('p', 'tl-text', it.s));
+          track.appendChild(card);
         });
-        wrap.appendChild(tl);
+        wrap.appendChild(track);
         box.appendChild(wrap);
       };
       var url = SUPABASE_URL + '/rest/v1/berita?select=' + select + '&status=eq.terbit&order=published_at.desc';
