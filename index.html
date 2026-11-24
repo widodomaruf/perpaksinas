@@ -41,7 +41,8 @@
       margin: 0;
       font-family: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
       color: var(--ink);
-      background: #fff;
+      background-color: #fff;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Cpath d='M20 2 L38 20 L20 38 L2 20 Z' fill='none' stroke='%23002060' stroke-opacity='.06' stroke-width='1'/%3E%3C/svg%3E");
       line-height: 1.6;
     }
     a { color: var(--navy); }
@@ -251,9 +252,27 @@
       nav.main a { margin-left: 12px; font-size: 14px; }
       h2 { font-size: 22px; }
     }
-  
+    /* menu HP: tombol di kanan atas, daftar menu turun ke bawah */
+    .menu-toggle { display: none; border: 0; background: none; width: 44px; height: 44px; align-items: center; justify-content: center; color: var(--navy); cursor: pointer; border-radius: 10px; padding: 0; }
+    .menu-toggle:focus-visible { outline: 2px solid var(--navy); outline-offset: 2px; }
+    @media (max-width: 760px) {
+      header.site { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+      header.site .wrap { min-height: 60px; position: relative; }
+      .menu-toggle { display: inline-flex; }
+      nav.main {
+        display: none; position: absolute; top: calc(100% - 4px); right: 20px; z-index: 40;
+        flex-direction: column; align-items: stretch; min-width: 200px;
+        background: #fff; border: 1px solid var(--line); border-radius: 12px;
+        box-shadow: 0 12px 30px rgba(15,35,70,.14); padding: 6px;
+      }
+      nav.main.open { display: flex; }
+      nav.main a { margin: 0; padding: 12px 14px; border-radius: 8px; font-size: 15px; }
+      nav.main a:hover, nav.main a:active { background: rgba(0,32,96,.06); }
+      body { padding-bottom: 0; animation-fill-mode: backwards; }
+    }
+
     /* ---- efek kaca dan animasi ---- */
-    body { animation: pageIn .6s cubic-bezier(.2,.7,.2,1) both; }
+    body { animation: pageIn .6s cubic-bezier(.2,.7,.2,1) backwards; }
     body.leaving { opacity: 0; transition: opacity .25s ease; }
     @keyframes pageIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
     header.site { background: rgba(255,255,255,.55) !important; -webkit-backdrop-filter: saturate(180%) blur(18px); backdrop-filter: saturate(180%) blur(18px); border-bottom: 1px solid rgba(255,255,255,.5) !important; }
@@ -332,7 +351,7 @@
   <header class="site">
     <div class="wrap">
       <a href="#beranda"><img src="assets/logo-perpaksinas-300.png" alt="PERPAKSINAS"></a>
-      <nav class="main">
+      <nav class="main" id="nav-main">
         <a href="#tentang">Tentang</a>
         <a href="#riwayat">Riwayat</a>
         <a href="#pengurus">Pengurus</a>
@@ -341,6 +360,7 @@
         <a href="forum.html">Forum</a>
         <a href="#anggota">Anggota</a>
       </nav>
+      <button type="button" class="menu-toggle" aria-label="Buka menu" aria-expanded="false" aria-controls="nav-main"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
     </div>
   </header>
 
@@ -591,8 +611,6 @@
           <div class="chart-card"><h3>Komposisi kategori</h3><div id="donut"></div><div id="donut-legend" class="legend"></div></div>
           <div class="chart-card"><h3>Sebaran wilayah</h3><div id="bars"></div></div>
         </section>
-        <h3 class="sub-head">Daftar forum</h3>
-        <div class="chips" id="forum-chips"><div class="meta">Memuat daftar forum...</div></div>
         <a href="forum.html">Lihat semua forum &rarr;</a>
       </div>
     </section>
@@ -740,7 +758,6 @@
       var SUPABASE_URL = 'https://scxflkmpaxnxnuqfvxtg.supabase.co';
       var SUPABASE_KEY = 'sb_publishable_T8AE_ybRKa4yUvY7ioEwqQ_hsK1wR4A';
       var box = document.getElementById('forum-summary');
-      var chips = document.getElementById('forum-chips');
       var url = SUPABASE_URL + '/rest/v1/forums?select=slug,nama,wilayah,kategori&kategori=neq.perpaksinas&order=nama.asc';
       var LABEL = { provinsi: 'Forum provinsi', kl: 'Kementerian, lembaga & BUMN', komunitas: 'Komunitas' };
       var BOX_ICON = { total: '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3 2.7-5 6-5s6 2 6 5"/><circle cx="17" cy="9" r="2.5"/><path d="M21 19c0-2-1.5-3.5-4-3.5"/></svg>', provinsi: '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6-7-11a7 7 0 0 1 14 0c0 5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>', kl: '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="1"/><path d="M9 7h1M14 7h1M9 11h1M14 11h1M10 21v-4h4v4"/></svg>', komunitas: '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-8-5-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 6-8 11-8 11z"/></svg>' };
@@ -806,21 +823,26 @@
         });
       };
 
-      var renderChips = function () {
-        chips.textContent = '';
-        rows.forEach(function (r) {
-          var a = el('a', 'chip', r.nama); a.href = 'forum.html';
-          chips.appendChild(a);
-        });
-      };
-
       fetch(url, { headers: { 'apikey': SUPABASE_KEY } })
         .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
-        .then(function (data) { rows = data; renderSummary(); renderCharts(); renderChips(); })
+        .then(function (data) { rows = data; renderSummary(); renderCharts(); })
         .catch(function () {
           box.textContent = 'Ringkasan forum belum bisa dimuat.';
-          chips.textContent = '';
         });
+    })();
+  </script>
+  <script>
+    (function () {
+      var b = document.querySelector('.menu-toggle'), n = document.getElementById('nav-main');
+      if (!b || !n) return;
+      b.addEventListener('click', function () {
+        var open = n.classList.toggle('open');
+        b.setAttribute('aria-expanded', open ? 'true' : 'false');
+        b.setAttribute('aria-label', open ? 'Tutup menu' : 'Buka menu');
+      });
+      n.addEventListener('click', function (e) {
+        if (e.target.tagName === 'A') { n.classList.remove('open'); b.setAttribute('aria-expanded', 'false'); }
+      });
     })();
   </script>
 </body>
