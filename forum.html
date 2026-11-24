@@ -7,6 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/vendor/lenis.css">
   <style>
     :root {
       --navy: #002060;
@@ -517,19 +518,6 @@
   <script>
     (function () {
       var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      if (!reduce && 'IntersectionObserver' in window) {
-        var targets = document.querySelectorAll('section.block, .hero-grid > *, .timeline > *, .grid > *, .pengurus-grid > *');
-        var io = new IntersectionObserver(function (entries) {
-          entries.forEach(function (en) {
-            if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); }
-          });
-        }, { threshold: 0.12 });
-        targets.forEach(function (t, i) {
-          t.classList.add('reveal');
-          t.style.transitionDelay = ((i % 4) * 90) + 'ms';
-          io.observe(t);
-        });
-      }
       document.addEventListener('click', function (e) {
         var a = e.target.closest && e.target.closest('a[href]');
         if (!a || a.target === '_blank' || e.metaKey || e.ctrlKey || e.shiftKey) return;
@@ -558,5 +546,10 @@
       });
     })();
   </script>
+  <script src="assets/vendor/gsap.min.js"></script>
+  <script src="assets/vendor/ScrollTrigger.min.js"></script>
+  <script src="assets/vendor/lenis.min.js"></script>
+  <script src="assets/vendor/motion.js"></script>
+  <script src="assets/motion-ui.js"></script>
 </body>
 </html>
