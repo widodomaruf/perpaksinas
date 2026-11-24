@@ -287,6 +287,21 @@
     .card .contact { margin-top: 10px; font-size: 14px; word-break: break-word; }
     .card .contact a { color: var(--navy); display: inline-flex; align-items: center; gap: 6px; word-break: break-all; }
     .card .contact svg { width: 16px; height: 16px; flex-shrink: 0; }
+      .ico { width: 20px; height: 20px; vertical-align: -4px; margin-right: 8px; color: var(--navy); flex: 0 0 auto; }
+    .kicker .ico { width: 16px; height: 16px; vertical-align: -3px; margin-right: 6px; }
+    .cat-box .head { display: flex; align-items: center; gap: 8px; }
+    .cat-box .head .ico { margin: 0; color: var(--red); width: 18px; height: 18px; }
+    .chart-wrap { display: grid; grid-template-columns: 1fr 1.4fr; gap: 16px; margin: 8px 0 28px; }
+    .chart-card { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; }
+    .chart-card h3 { margin: 0 0 12px; font-size: 17px; color: var(--navy); }
+    #donut svg { width: 200px; height: 200px; display: block; margin: 0 auto; }
+    .legend { display: grid; gap: 6px; margin-top: 12px; font-size: 14px; }
+    .legend .sw { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 8px; vertical-align: -1px; }
+    .bar-row { display: grid; grid-template-columns: 150px 1fr 36px; gap: 10px; align-items: center; font-size: 14px; margin-bottom: 8px; }
+    .bar-track { background: var(--soft); border-radius: 6px; height: 12px; overflow: hidden; }
+    .bar-fill { height: 100%; background: var(--navy); border-radius: 6px; }
+    .bar-n { text-align: right; font-weight: 700; color: var(--navy); }
+    @media (max-width: 760px) { .chart-wrap { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
@@ -308,10 +323,14 @@
   </header>
 
   <main class="wrap" style="padding-top: 40px; padding-bottom: 40px;">
-    <p class="kicker">Forum</p>
+    <p class="kicker"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3 2.7-5 6-5s6 2 6 5"/><circle cx="17" cy="9" r="2.5"/><path d="M21 19c0-2-1.5-3.5-4-3.5"/></svg>Forum</p>
     <h1>Forum PAKSI dan API</h1>
     <p class="sub">Daftar forum penyuluh antikorupsi di provinsi, kementerian, lembaga, dan BUMN, serta komunitas yang terhimpun di PERPAKSINAS.</p>
     <div id="summary" class="forum-cats"></div>
+    <section class="chart-wrap" aria-label="Visualisasi forum">
+      <div class="chart-card"><h3>Komposisi kategori</h3><div id="donut"></div><div id="donut-legend" class="legend"></div></div>
+      <div class="chart-card"><h3>Sebaran wilayah</h3><div id="bars"></div></div>
+    </section>
     <nav class="kat-filter" aria-label="Filter kategori forum">
       <button type="button" data-f="all" aria-pressed="true">Semua</button>
       <button type="button" data-f="provinsi" aria-pressed="false">Provinsi</button>
@@ -368,18 +387,61 @@
       var ICON_MAIL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 6-10 7L2 6"/></svg>';
       var ICON_IG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.9" fill="currentColor" stroke="none"/></svg>';
       var icon = function (svg) { var w = document.createElement('span'); w.innerHTML = svg; return w.firstChild; };
+      var BOX_ICON = { total: '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3 2.7-5 6-5s6 2 6 5"/><circle cx="17" cy="9" r="2.5"/><path d="M21 19c0-2-1.5-3.5-4-3.5"/></svg>', provinsi: '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6-7-11a7 7 0 0 1 14 0c0 5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>', kl: '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="1"/><path d="M9 7h1M14 7h1M9 11h1M14 11h1M10 21v-4h4v4"/></svg>', komunitas: '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-8-5-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 6-8 11-8 11z"/></svg>' };
+      var COLORS = ['#002060', '#d50000', '#7d9bd1'];
+      var REG = {};
+      var setR = function (region, list) { list.forEach(function (w) { REG[w] = region; }); };
+      setR('Sumatra', ['Aceh', 'Sumatera Utara', 'Sumatera Barat', 'Sumatera Selatan', 'Bengkulu', 'Lampung', 'Riau', 'Kepulauan Riau', 'Bangka Belitung', 'Jambi']);
+      setR('Jawa', ['DKI Jakarta', 'Jawa Barat', 'Jawa Tengah', 'DI Yogyakarta', 'Jawa Timur', 'Banten']);
+      setR('Kalimantan', ['Kalimantan Selatan', 'Kalimantan Barat', 'Kalimantan Tengah', 'Kalimantan Timur', 'Kalimantan Utara']);
+      setR('Sulawesi', ['Sulawesi Utara', 'Gorontalo', 'Sulawesi Tengah', 'Sulawesi Barat', 'Sulawesi Selatan', 'Sulawesi Tenggara']);
+      setR('Bali & Nusa Tenggara', ['Bali', 'Nusa Tenggara Barat', 'Nusa Tenggara Timur']);
+      setR('Maluku', ['Maluku', 'Maluku Utara']);
+      setR('Papua', ['Papua Barat Daya', 'Papua Barat', 'Papua', 'Papua Selatan', 'Papua Pegunungan', 'Papua Tengah']);
+      var regionOf = function (r) { return REG[r.wilayah] || 'Nasional & K/L'; };
+      var REGIONS = ['Sumatra', 'Jawa', 'Kalimantan', 'Sulawesi', 'Bali & Nusa Tenggara', 'Maluku', 'Papua', 'Nasional & K/L'];
+      var renderCharts = function () {
+        var donut = document.getElementById('donut'), legend = document.getElementById('donut-legend'), bars = document.getElementById('bars');
+        donut.textContent = ''; legend.textContent = ''; bars.textContent = '';
+        var parts = [['provinsi', 'Forum provinsi'], ['kl', 'Kementerian, lembaga & BUMN'], ['komunitas', 'Komunitas']].map(function (p) {
+          return { label: p[1], n: rows.filter(function (r) { return r.kategori === p[0]; }).length };
+        });
+        var total = parts.reduce(function (a, p) { return a + p.n; }, 0) || 1;
+        var C = 2 * Math.PI * 50, off = 0, segs = '';
+        parts.forEach(function (p, i) {
+          var len = C * p.n / total;
+          segs += '<circle cx="60" cy="60" r="50" fill="none" stroke="' + COLORS[i] + '" stroke-width="18" stroke-dasharray="' + len + ' ' + (C - len) + '" stroke-dashoffset="' + (-off) + '"/>';
+          off += len;
+        });
+        donut.innerHTML = '<svg viewBox="0 0 120 120" role="img" aria-label="Diagram kategori forum"><g transform="rotate(-90 60 60)">' + segs + '</g>'
+          + '<text x="60" y="60" text-anchor="middle" font-size="22" font-weight="800" fill="#002060">' + rows.length + '</text>'
+          + '<text x="60" y="76" text-anchor="middle" font-size="9" fill="#5b6474">forum</text></svg>';
+        parts.forEach(function (p, i) {
+          var d = el('div'); var sw = el('span', 'sw'); sw.style.background = COLORS[i];
+          d.appendChild(sw); d.appendChild(document.createTextNode(p.label + ': ' + p.n)); legend.appendChild(d);
+        });
+        var counts = {}; REGIONS.forEach(function (g) { counts[g] = 0; });
+        rows.forEach(function (r) { counts[regionOf(r)]++; });
+        var max = Math.max.apply(null, REGIONS.map(function (g) { return counts[g]; })) || 1;
+        REGIONS.forEach(function (g) {
+          var row = el('div', 'bar-row'); row.appendChild(el('div', '', g));
+          var track = el('div', 'bar-track'); var fill = el('div', 'bar-fill'); fill.style.width = (counts[g] / max * 100) + '%';
+          track.appendChild(fill); row.appendChild(track); row.appendChild(el('div', 'bar-n', String(counts[g])));
+          bars.appendChild(row);
+        });
+      };
 
       var renderSummary = function () {
         summary.textContent = '';
         var count = {};
         rows.forEach(function (r) { count[r.kategori] = (count[r.kategori] || 0) + 1; });
-        var items = [['Total forum dan komunitas', rows.length]].concat(
-          ['provinsi', 'kl', 'komunitas'].map(function (k) { return [LABEL[k], count[k] || 0]; })
+        var items = [['total', 'Total forum dan komunitas', rows.length]].concat(
+          ['provinsi', 'kl', 'komunitas'].map(function (k) { return [k, LABEL[k], count[k] || 0]; })
         );
         items.forEach(function (x) {
           var c = el('div', 'cat-box');
-          c.appendChild(el('div', 'n', String(x[1])));
-          c.appendChild(el('div', 'd', x[0]));
+          var head = el('div', 'head'); head.appendChild(icon(BOX_ICON[x[0]])); head.appendChild(el('div', 'n', String(x[2])));
+          c.appendChild(head); c.appendChild(el('div', 'd', x[1]));
           summary.appendChild(c);
         });
       };
@@ -422,7 +484,7 @@
 
       fetch(url, { headers: { 'apikey': SUPABASE_KEY } })
         .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
-        .then(function (data) { rows = data; renderSummary(); renderGrid(); })
+        .then(function (data) { rows = data; renderSummary(); renderCharts(); renderGrid(); })
         .catch(function () {
           grid.textContent = '';
           grid.appendChild(el('div', 'meta', 'Daftar forum belum bisa dimuat. Coba lagi beberapa saat lagi.'));
