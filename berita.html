@@ -229,24 +229,23 @@
       nav.main a { margin-left: 12px; font-size: 14px; }
       h2 { font-size: 22px; }
     }
-    /* menu bawah untuk HP: mudah dijangkau jempol */
+    /* menu HP: tombol di kanan atas, daftar menu turun ke bawah */
+    .menu-toggle { display: none; border: 0; background: none; width: 44px; height: 44px; align-items: center; justify-content: center; color: var(--navy); cursor: pointer; border-radius: 10px; padding: 0; }
+    .menu-toggle:focus-visible { outline: 2px solid var(--navy); outline-offset: 2px; }
     @media (max-width: 760px) {
       header.site { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
-      header.site .wrap { min-height: 60px; }
+      header.site .wrap { min-height: 60px; position: relative; }
+      .menu-toggle { display: inline-flex; }
       nav.main {
-        position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
-        display: flex; justify-content: space-around; align-items: stretch;
-        background: rgba(255,255,255,.95); border-top: 1px solid var(--line);
-        box-shadow: 0 -6px 20px rgba(15,35,70,.08);
-        padding: 4px 4px calc(4px + env(safe-area-inset-bottom));
+        display: none; position: absolute; top: calc(100% - 4px); right: 20px; z-index: 40;
+        flex-direction: column; align-items: stretch; min-width: 200px;
+        background: #fff; border: 1px solid var(--line); border-radius: 12px;
+        box-shadow: 0 12px 30px rgba(15,35,70,.14); padding: 6px;
       }
-      nav.main a {
-        margin: 0; flex: 1 1 0; min-height: 48px; padding: 0 2px;
-        display: flex; align-items: center; justify-content: center;
-        font-size: 11px; letter-spacing: -.01em; text-align: center; border-radius: 10px;
-      }
-      nav.main a:active { background: rgba(0,32,96,.08); }
-      body { padding-bottom: calc(72px + env(safe-area-inset-bottom)); animation-fill-mode: backwards; }
+      nav.main.open { display: flex; }
+      nav.main a { margin: 0; padding: 12px 14px; border-radius: 8px; font-size: 15px; }
+      nav.main a:hover, nav.main a:active { background: rgba(0,32,96,.06); }
+      body { padding-bottom: 0; animation-fill-mode: backwards; }
     }
   </style>
   <style>
@@ -316,7 +315,7 @@
 <header class="site">
     <div class="wrap">
       <a href="index.html#beranda"><img src="assets/logo-perpaksinas-300.png" alt="PERPAKSINAS"></a>
-      <nav class="main">
+      <nav class="main" id="nav-main">
         <a href="index.html#tentang">Tentang</a>
         <a href="index.html#riwayat">Riwayat</a>
         <a href="index.html#pengurus">Pengurus</a>
@@ -325,6 +324,7 @@
         <a href="forum.html">Forum</a>
         <a href="index.html#anggota">Anggota</a>
       </nav>
+      <button type="button" class="menu-toggle" aria-label="Buka menu" aria-expanded="false" aria-controls="nav-main"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
     </div>
   </header>
 
@@ -537,6 +537,20 @@
         e.preventDefault();
         document.body.classList.add('leaving');
         setTimeout(function () { location.href = a.href; }, 250);
+      });
+    })();
+  </script>
+  <script>
+    (function () {
+      var b = document.querySelector('.menu-toggle'), n = document.getElementById('nav-main');
+      if (!b || !n) return;
+      b.addEventListener('click', function () {
+        var open = n.classList.toggle('open');
+        b.setAttribute('aria-expanded', open ? 'true' : 'false');
+        b.setAttribute('aria-label', open ? 'Tutup menu' : 'Buka menu');
+      });
+      n.addEventListener('click', function (e) {
+        if (e.target.tagName === 'A') { n.classList.remove('open'); b.setAttribute('aria-expanded', 'false'); }
       });
     })();
   </script>
