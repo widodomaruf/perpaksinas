@@ -552,48 +552,6 @@
     (function () {
       var SUPABASE_URL = 'https://scxflkmpaxnxnuqfvxtg.supabase.co';
       var SUPABASE_KEY = 'sb_publishable_T8AE_ybRKa4yUvY7ioEwqQ_hsK1wR4A';
-      var form = document.getElementById('reg-form');
-      var msg = document.getElementById('reg-msg');
-      form.addEventListener('submit', function (e) {
-        e.preventDefault();
-        var fd = new FormData(form);
-        var body = {
-          nama: String(fd.get('nama') || '').trim(),
-          provinsi: String(fd.get('provinsi') || '').trim(),
-          nomor_sertifikat: String(fd.get('nomor_sertifikat') || '').trim() || null,
-          consent_publik: true,
-          status: 'pending'
-        };
-        var btn = form.querySelector('button');
-        btn.disabled = true;
-        msg.className = 'reg-msg';
-        msg.textContent = 'Mengirim...';
-        fetch(SUPABASE_URL + '/rest/v1/pendaftaran', {
-          method: 'POST',
-          headers: {
-            'apikey': SUPABASE_KEY,
-            'Content-Type': 'application/json',
-            'Prefer': 'return=minimal'
-          },
-          body: JSON.stringify(body)
-        }).then(function (res) {
-          if (!res.ok) throw new Error('HTTP ' + res.status);
-          form.reset();
-          msg.className = 'reg-msg ok';
-          msg.textContent = 'Terima kasih. Pendaftaran kamu sudah masuk dan menunggu verifikasi admin.';
-        }).catch(function () {
-          msg.className = 'reg-msg err';
-          msg.textContent = 'Pendaftaran belum terkirim. Coba lagi beberapa saat lagi.';
-        }).finally(function () {
-          btn.disabled = false;
-        });
-      });
-    })();
-  </script>
-  <script>
-    (function () {
-      var SUPABASE_URL = 'https://scxflkmpaxnxnuqfvxtg.supabase.co';
-      var SUPABASE_KEY = 'sb_publishable_T8AE_ybRKa4yUvY7ioEwqQ_hsK1wR4A';
       var list = document.getElementById('news-list');
       var url = SUPABASE_URL + '/rest/v1/berita?select=judul,ringkasan,published_at,sumber_nama,sumber_url,gambar_url,forums(nama)&status=eq.terbit&order=published_at.desc';
       fetch(url, { headers: { 'apikey': SUPABASE_KEY } })
