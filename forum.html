@@ -275,6 +275,19 @@
       .reveal { opacity: 1; transform: none; }
     }
 </style>
+  <style>
+    .forum-cats { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px; margin: 18px 0 24px; }
+    .cat-box { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; }
+    .cat-box .n { font-size: 28px; font-weight: 800; color: var(--navy); line-height: 1.1; }
+    .cat-box .d { color: var(--muted); font-size: 14px; margin-top: 4px; }
+    .kat-filter { display: flex; gap: 8px; flex-wrap: wrap; margin: 0 0 4px; }
+    .kat-filter button { padding: 9px 16px; border-radius: 999px; border: 1px solid var(--line); background: #fff; color: var(--navy); font: inherit; font-weight: 600; font-size: 14px; cursor: pointer; }
+    .kat-filter button[aria-pressed="true"] { background: var(--navy); border-color: var(--navy); color: #fff; }
+    .card .tag { font-size: 12px; color: var(--red); font-weight: 700; text-transform: uppercase; letter-spacing: .05em; }
+    .card .contact { margin-top: 10px; font-size: 14px; word-break: break-word; }
+    .card .contact a { color: var(--navy); display: inline-flex; align-items: center; gap: 6px; word-break: break-all; }
+    .card .contact svg { width: 16px; height: 16px; flex-shrink: 0; }
+  </style>
 </head>
 <body>
 
@@ -352,6 +365,9 @@
       var el = function (tag, cls, text) { var n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
       var rows = [];
       var current = 'all';
+      var ICON_MAIL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 6-10 7L2 6"/></svg>';
+      var ICON_IG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.9" fill="currentColor" stroke="none"/></svg>';
+      var icon = function (svg) { var w = document.createElement('span'); w.innerHTML = svg; return w.firstChild; };
 
       var renderSummary = function () {
         summary.textContent = '';
@@ -380,13 +396,15 @@
           if (r.wilayah) card.appendChild(el('p', '', r.wilayah));
           var c = el('p', 'contact');
           if (r.email) {
-            var a = el('a', '', r.email); a.href = 'mailto:' + r.email; c.appendChild(a);
+            var a = el('a'); a.href = 'mailto:' + r.email;
+            a.appendChild(icon(ICON_MAIL)); a.appendChild(document.createTextNode(r.email)); c.appendChild(a);
           }
           if (r.instagram) {
             if (r.email) c.appendChild(document.createTextNode(' · '));
-            var ig = el('a', '', r.instagram);
+            var ig = el('a');
             ig.href = 'https://www.instagram.com/' + encodeURIComponent(r.instagram.replace(/^@/, ''));
             ig.target = '_blank'; ig.rel = 'noopener noreferrer';
+            ig.appendChild(icon(ICON_IG)); ig.appendChild(document.createTextNode(r.instagram));
             c.appendChild(ig);
           }
           if (c.childNodes.length) card.appendChild(c);
